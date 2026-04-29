@@ -3,6 +3,7 @@
   'use strict';
 
   let ws = null;
+  let wsWasConnected = false;
   let commandHistory = [];
   let historyIndex = -1;
   const API_BASE = window.location.origin;
@@ -95,6 +96,7 @@
     try {
       ws = new WebSocket(WS_URL);
       ws.onopen = () => {
+        wsWasConnected = true;
         setStatus('connected', 'connected');
         addTermLine('connected via WebSocket — type HELP to get started', 'term-ok');
       };
@@ -106,7 +108,9 @@
       };
       ws.onclose = () => {
         setStatus('disconnected', 'error');
-        addTermLine('WebSocket disconnected — falling back to HTTP', 'term-err');
+        if (wsWasConnected) {
+          addTermLine('WebSocket disconnected — falling back to HTTP', 'term-err');
+        }
         ws = null;
       };
       ws.onerror = () => { setStatus('error', 'error'); ws = null; };

@@ -185,6 +185,7 @@ body {
   border-bottom: 1.5px solid var(--border);
   background: var(--paper);
 }
+.terminal-note { max-width: 1060px; margin: 0 auto 1.25rem; font-size: 0.85rem; color: var(--text-muted); }
 .terminal-wrapper { max-width: 1060px; margin: 0 auto; display: flex; gap: 2rem; align-items: flex-start; }
 .terminal-window {
   flex: 1;
