@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="rawth - A key-value database built from scratch in Go. Custom B+Tree, binary file format, hand-written query language. No ORMs. No abstractions. Just bytes.">
+  <title>rawth - A Database, From Scratch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗄️</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav id="nav">
+    <div class="nav-brand">
+      <span class="nav-name">rawth</span>
+      <span class="nav-tag">v1.0.0</span>
+    </div>
+    <div class="nav-links">
+      <a href="#terminal" class="nav-link">Terminal</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+      <a href="#stats" class="nav-link">Stats</a>
+      <a href="#about" class="nav-link">Manifesto</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+      <a href="https://github.com/Nikhil-Singh2745/rawth" class="nav-link nav-link-github" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        Live Database - running right now
+      </div>
+      <h1 class="hero-title">
+        I built a<br>
+        <span class="accent">database.</span>
+      </h1>
+      <p class="hero-sub">
+        From scratch. In Go. With a custom B+Tree, a binary file format I invented, a query language named after internet slang, and a TCP server because why not. No ORMs. No Postgres. No SQLite.<br><br>
+        <strong>My bytes. My disk. My rules.</strong>
+      </p>
+      <div class="hero-badges">
+        <span class="badge">B+Tree</span>
+        <span class="badge">4KB Pages</span>
+        <span class="badge">TCP :6379</span>
+        <span class="badge">RQL</span>
+        <span class="badge">Go</span>
+        <span class="badge">RFC 6455 WebSocket</span>
+        <span class="badge">Zero external deps</span>
+      </div>
+      <div class="hero-cta">
+        <a href="#terminal" class="btn btn-primary" id="hero-try-btn">Try the Terminal →</a>
+        <a href="#about" class="btn btn-secondary">Read the Manifesto</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hex-dump" id="hero-hex">
+        <div class="hex-header">
+          <span class="hex-dot red"></span>
+          <span class="hex-dot yellow"></span>
+          <span class="hex-dot green"></span>
+          <span class="hex-filename">rawth.db - binary preview</span>
+        </div>
+        <div class="hex-content" id="hex-content">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terminal -->
+  <section id="terminal">
+    <div class="section-header">
+      <div class="section-tag">Interactive Terminal</div>
+      <h2 class="section-title">Talk to a live rawth instance</h2>
+      <p class="section-sub">This is a real database running in real-time. Commands you run here hit the actual B+Tree on disk.</p>
+    </div>
+    <div class="terminal-wrapper">
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <span class="term-dot red"></span>
+            <span class="term-dot yellow"></span>
+            <span class="term-dot green"></span>
+          </div>
+          <div class="terminal-title">rawth - RQL Terminal</div>
+          <div class="terminal-status" id="connection-status">
+            <span class="status-dot"></span>
+            <span class="status-text">connecting...</span>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal-output"></div>
+        <div class="terminal-input-row">
+          <span class="terminal-prompt">rawth&gt;</span>
+          <input type="text" id="terminal-input" class="terminal-input" placeholder="Type an RQL command..." autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+
+      <div class="terminal-aside">
+        <div class="aside-block">
+          <div class="aside-label">Quick Commands</div>
+          <div class="hint-grid">
+            <button class="hint-btn" data-cmd='SHOVE greeting "hello world"' id="hint-shove">
+              <code>SHOVE</code> <span>Store a value</span>
+            </button>
+            <button class="hint-btn" data-cmd="YOINK greeting" id="hint-yoink">
+              <code>YOINK</code> <span>Get a value</span>
+            </button>
+            <button class="hint-btn" data-cmd="YEET greeting" id="hint-yeet">
+              <code>YEET</code> <span>Delete a key</span>
+            </button>
+            <button class="hint-btn" data-cmd="PEEK greeting" id="hint-peek">
+              <code>PEEK</code> <span>Check existence</span>
+            </button>
+            <button class="hint-btn" data-cmd="KEYS" id="hint-keys">
+              <code>KEYS</code> <span>List all keys</span>
+            </button>
+            <button class="hint-btn" data-cmd="STATS" id="hint-stats">
+              <code>STATS</code> <span>DB statistics</span>
+            </button>
+            <button class="hint-btn" data-cmd='SHOVE temp "expires soon" TTL 10' id="hint-ttl">
+              <code>TTL</code> <span>Expiring key</span>
+            </button>
+            <button class="hint-btn" data-cmd="HELP" id="hint-help">
+              <code>HELP</code> <span>Show help</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="aside-block">
+          <div class="aside-label">What is RQL?</div>
+          <div class="rql-explainer">
+            <p>RQL (Rawth Query Language) is a query language I invented in about 20 minutes. It has 8 commands and zero ambiguity.</p>
+            <p>The syntax is basically: <code>VERB key "value"</code>. The command names are deliberately stupid - <code>SHOVE</code> stores, <code>YOINK</code> retrieves, <code>YEET</code> deletes.</p>
+            <p>The lexer is hand-written, byte-by-byte. The parser is recursive descent with nothing to recurse into.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section id="architecture">
+    <div class="section-header">
+      <div class="section-tag">Architecture</div>
+      <h2 class="section-title">Under the Hood</h2>
+      <p class="section-sub">Every layer built without external dependencies. Not because it's smart, but because that was the point.</p>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-num">01 / PAGER</div>
+        <h3>Disk I/O Layer</h3>
+        <p>Fixed-size 4KB pages read and written directly via <code>ReadAt</code>/<code>WriteAt</code>. Buffer pool caches hot pages. Free list recycles deleted pages. Every file starts with 4 magic bytes: <code>RAWT</code>.</p>
+        <code class="arch-code">offset = pageID × 4096</code>
+      </div>
+      <div class="arch-card">
+        <div class="arch-num">02 / B+TREE</div>
+        <h3>Storage Structure</h3>
+        <p>Disk-based B+Tree. Leaf nodes are linked for sequential scans. Internal nodes hold keys and child page IDs. Splits when the serialized node exceeds ~4089 bytes. No node merging on delete - too much work.</p>
+        <code class="arch-code">search → split → serialize → flush</code>
+      </div>
+      <div class="arch-card">
+        <div class="arch-num">03 / ENGINE</div>
+        <h3>Storage API</h3>
+        <p>Wraps the B+Tree with TTL support (lazy expiration - if you never read an expired key, it stays in the file forever like a ghost), thread-safe locking, and runtime stats.</p>
+        <code class="arch-code">Engine → B+Tree → Pager → Disk</code>
+      </div>
+      <div class="arch-card">
+        <div class="arch-num">04 / RQL</div>
+        <h3>Query Language</h3>
+        <p>Hand-written lexer tokenizes byte-by-byte. Recursive descent parser (there's nothing to recurse into - it's a flat switch statement with a fancy name). No regex. No parser generators.</p>
+        <code class="arch-code">input → tokens → AST → execute</code>
+      </div>
+      <div class="arch-card">
+        <div class="arch-num">05 / TCP</div>
+        <h3>TCP Interface</h3>
+        <p>Redis-style TCP server on port 6379. One goroutine per connection. Line-delimited RQL in, text responses out. Connect with <code>nc localhost 6379</code> and it works. That's it.</p>
+        <code class="arch-code">nc localhost 6379</code>
+      </div>
+      <div class="arch-card">
+        <div class="arch-num">06 / HTTP</div>
+        <h3>HTTP + WebSocket</h3>
+        <p>REST API for queries. WebSocket implementation hand-rolled from RFC 6455 because the standard library doesn't include one and I wasn't going to add a dependency for 200 lines of code. Static files embedded via <code>go:embed</code>.</p>
+        <code class="arch-code">POST /api/query → ws://host/ws</code>
+      </div>
+    </div>
+
+    <div class="data-flow">
+      <div class="flow-title">Data Flow - what happens when you type SHOVE</div>
+      <div class="flow-visualization">
+        <div class="flow-step">
+          <div class="flow-node input-node">RQL Input</div>
+          <div class="flow-label">SHOVE key "val"</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-node parse-node">Lexer + Parser</div>
+          <div class="flow-label">tokenize → parse</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-node exec-node">Executor</div>
+          <div class="flow-label">dispatch command</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-node tree-node">B+Tree</div>
+          <div class="flow-label">find leaf → insert</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-node disk-node">Disk</div>
+          <div class="flow-label">serialize → write page</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section id="stats">
+    <div class="section-header">
+      <div class="section-tag">Live Stats</div>
+      <h2 class="section-title">Real-time database metrics</h2>
+      <p class="section-sub">Numbers pulled directly from the running instance. Updates every 3 seconds.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🔑</div>
+        <div class="stat-value" id="stat-keys">—</div>
+        <div class="stat-label">Keys Stored</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌳</div>
+        <div class="stat-value" id="stat-depth">—</div>
+        <div class="stat-label">Tree Depth</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📄</div>
+        <div class="stat-value" id="stat-pages">—</div>
+        <div class="stat-label">Disk Pages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💾</div>
+        <div class="stat-value" id="stat-size">—</div>
+        <div class="stat-label">File Size</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📥</div>
+        <div class="stat-value" id="stat-puts">—</div>
+        <div class="stat-label">Total Puts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📤</div>
+        <div class="stat-value" id="stat-gets">—</div>
+        <div class="stat-label">Total Gets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🗑️</div>
+        <div class="stat-value" id="stat-deletes">—</div>
+        <div class="stat-label">Total Deletes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-value" id="stat-uptime">—</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Manifesto -->
+  <section id="about">
+    <div class="manifesto-inner">
+      <h2 class="manifesto-title">The <span class="accent">Manifesto</span></h2>
+      <div class="manifesto-dateline">BY NIKHIL SINGH - APRIL 2026 - NOT A LEARNING EXERCISE, SORT OF</div>
+
+      <div class="manifesto-body">
+
+        <p>
+          I didn't build this to learn. I didn't build this because I had a gap in the database market I was trying to fill. I built this because every senior engineer I've ever met talks about "understanding the fundamentals" and then immediately reaches for Prisma. I wanted to see what happened if you just... didn't.
+        </p>
+
+        <p>
+          The result is <strong>rawth</strong>. A key-value store that stores your data in a custom binary format on disk, organized by a B+Tree I wrote myself, accessible via a query language I named after internet slang. It runs on a TCP server. It also has a WebSocket interface because that's what 2024 demands of you, apparently.
+        </p>
+
+        <div class="manifesto-pullquote">
+          "While everyone else was adding another layer of abstraction, I was writing bytes to disk with a hex editor open in one window and the B+Tree Wikipedia page open in another."
+        </div>
+
+        <p>
+          Let's be honest about what this is and isn't. It is not well-optimized. The TTL expiration is lazy - keys expire only when you touch them, which means expired data can absolutely sit on disk indefinitely if you stop asking for it. The delete operation doesn't merge underflowing nodes because that is genuinely hard to implement correctly and I had other things to do. The buffer pool eviction policy is "if the map is full, don't cache it," which is not a policy any serious database person would recommend.
+        </p>
+
+        <p>
+          The B+Tree is real. It splits, it serializes to 4096-byte pages, the leaves are linked so you can scan in order. When I first got a split working correctly at the root level - the moment a tree grows from one level to two - I felt genuinely unreasonable levels of satisfaction. This was immediately followed by three hours of debugging why the page offsets were off by one whenever I had more than 47 keys. It was an integer overflow. It is always an integer overflow.
+        </p>
+
+        <p>
+          The query language was designed in about 20 minutes, which is apparent. <code>SHOVE</code>, <code>YOINK</code>, <code>YEET</code>, <code>PEEK</code>. The parser is technically recursive descent, which is a term that sounds very impressive until you realize that in this case there's nothing to recurse into because the grammar is completely flat. The hand-written lexer does handle escape characters inside strings though, so at least there's that.
+        </p>
+
+        <p>
+          The WebSocket implementation reads RFC 6455 and implements the handshake, frame parsing, and masking entirely from scratch. This was either the most educational or most pointless thing I've done all month, depending on who you ask. The standard library does not include a WebSocket server. I was not going to add a dependency for 200 lines of code. So here we are.
+        </p>
+
+        <p>
+          Is this production-ready? <em>Absolutely not.</em> There's no replication, no write-ahead logging, no crash recovery, no authentication. If your process dies mid-write you might corrupt the file. The "free page recycling" via a singly-linked free list is correct in theory and largely untested under load. You should not use this to store anything you care about. You should absolutely use this to understand how the databases you use every day work under the hood.
+        </p>
+
+        <p>
+          The magic bytes at the start of every file are <code>RAWT</code>. If you open a rawth database in a hex editor, that's the first thing you'll see. After that: the version number (1), the page size (4096), the page count, and the root page ID. Everything else is tree nodes, packed as tight as I could get them into 4KB blocks. It is, in a small way, beautiful. In a larger way, it's just bytes. Bytes I put there on purpose, which is kind of the whole point.
+        </p>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="faq-inner">
+      <div class="section-header" style="text-align:left; margin-bottom:2.5rem;">
+        <div class="section-tag">FAQ</div>
+        <h2 class="section-title">Technical Questions<br>You Might Have</h2>
+        <p class="section-sub" style="margin:0;">Answers that are technically correct and slightly dismissive, as all good FAQ sections should be.</p>
+      </div>
+
+      <div id="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-1">
+            Why 4KB pages? Why not configurable?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-1">
+            <div class="faq-a-inner">
+              4096 bytes is the default page size for most Linux filesystems and aligns with hardware sector sizes. The OS already thinks in 4KB chunks, so aligning to that avoids partial page reads and keeps I/O amplification minimal. It's also the same size SQLite uses by default, and SQLite is more correct than I'll ever be. Could it be configurable? Yes. Is it? No. Making it configurable means testing every possible page size, which means more code, which means more bugs. The current implementation has a hard-coded constant and it works fine.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-2">
+            Why no node merging on delete? Isn't that a bug?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-2">
+            <div class="faq-a-inner">
+              It's a deliberate omission, which is a more professional way of saying it was too much work and the project still passes all its tests without it. Node merging (also called coalescing) is required for a proper B+Tree to maintain its fill-factor invariants over time. Without it, after many deletes, you end up with a lot of under-filled pages that waste disk space. For a database serving production traffic, this is a real problem. For a demo database running on a VPS, the disk space cost is probably measured in bytes. The free list does correctly recycle completely empty pages. The half-empty ones just stay half-empty. This is fine.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-3">
+            TTL expiration is lazy? What does that mean exactly?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-3">
+            <div class="faq-a-inner">
+              Lazy expiration means a key is only checked for expiration when someone tries to access it. If you <code>SHOVE temp "hello" TTL 10</code> and then never touch <code>temp</code> again, it will sit in the file indefinitely. The TTL metadata is stored in a Go <code>map[string]time.Time</code> in memory, which means it's also completely lost on process restart. This is roughly how Redis does lazy expiration too, though Redis also runs a background job to periodically scan for expired keys. I did not implement a background job. The tradeoff is simplicity versus correctness. I chose simplicity. You're welcome.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-4">
+            Why hand-roll the WebSocket server instead of using gorilla/websocket?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-4">
+            <div class="faq-a-inner">
+              The entire database engine - pager, B+Tree, storage engine, RQL parser - has zero external dependencies. Adding one for the WebSocket layer felt intellectually inconsistent. RFC 6455 is also not that long. The handshake is an HTTP upgrade with a SHA-1 hash of the key, the frame format is a small binary header, client-to-server frames are XOR masked with a 4-byte key. The implementation is about 200 lines and handles everything the terminal demo needs. It doesn't handle ping/pong frames or large message fragmentation, but nobody's sending a 100MB message through a database query terminal.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-5">
+            Why is the query language named SHOVE/YOINK/YEET and not SET/GET/DEL?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-5">
+            <div class="faq-a-inner">
+              <strong>SET/GET/DEL is Redis.</strong> This is not Redis. The names are distinctive enough that you immediately know you're talking to rawth, not accidentally connected to a real Redis instance and about to do something production-breaking. There's also a mild amusement factor that I thought made the project more entertaining. The command names are technically arbitrary identifiers - the lexer would work equally well if they were called <code>ALPHA/BETA/GAMMA</code>. They are not called <code>ALPHA/BETA/GAMMA</code> because that would be confusing and less fun.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-6">
+            Is this safe to use in production?
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-6">
+            <div class="faq-a-inner">
+              No. There is no write-ahead log, so an unclean shutdown mid-write can corrupt the file. There is no replication. There is no authentication - anyone who can reach port 6379 or 8080 can run <code>NUKE</code> and delete everything. The buffer pool uses a simple map with no LRU eviction policy. None of this is a secret; it's the entire premise of the project. rawth exists to demonstrate how a database works, not to replace the one your company runs on. Please do not store anything you care about in rawth. If you do, and it goes wrong, that's on you.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" id="faq-q-7">
+            The buffer pool eviction is just "if full, skip caching." That's terrible.
+            <span class="faq-chevron">+</span>
+          </button>
+          <div class="faq-a" id="faq-a-7">
+            <div class="faq-a-inner">
+              That is not a question, but yes, you are correct. A proper buffer pool uses LRU (least recently used) or Clock eviction to keep the most-accessed pages in memory and evict cold pages when space is needed. The current approach evicts nothing - once the buffer is at 256 pages, new pages just don't get cached. For a small dataset that fits in 256 pages (about 1MB of page data), this is fine and the cache hit rate is effectively 100%. For a large dataset, you'd see more disk reads than necessary. Implementing LRU adds about 50 lines of code and a doubly-linked list. I didn't feel like it.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer">
+    <div class="footer-name">rawth</div>
+    <div class="footer-tagline">your bytes. your disk. your rules.</div>
+    <div class="footer-credit">
+      Built from scratch by <a href="https://github.com/Nikhil-Singh2745" target="_blank" rel="noopener">Nikhil Singh</a>
+    </div>
+    <div class="footer-credit" style="margin-top:0.5rem;">
+      Also, please check out my <a href="https://leetcode.com/u/nikhilsingh2745/" target="_blank" rel="noopener">LeetCode profile</a>. 2554 rated, 1100+ problems solved. This is my only achievement, and I would like it acknowledged.
+    </div>
+    <div class="footer-credit" style="margin-top:0.5rem; opacity:0.6;">
+      Please hire me. I can reverse a linked list under pressure. That's apparently what senior engineering requires.
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
