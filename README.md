@@ -116,4 +116,4 @@ rawth/
 
 MIT - do whatever you want with it.
 
-Built from scratch by [Nikhil Singh](https://github.com/niksingh2745).
+Built from scratch by Nikhil Singh.
