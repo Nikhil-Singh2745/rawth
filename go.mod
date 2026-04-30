@@ -1,3 +1,3 @@
-module github.com/niksingh2745/rawth
+module github.com/Nikhil-Singh2745/rawth
 
 go 1.22.2

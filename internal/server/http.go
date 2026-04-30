@@ -16,8 +16,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/niksingh2745/rawth/internal/rql"
-	"github.com/niksingh2745/rawth/internal/storage"
+	"github.com/Nikhil-Singh2745/rawth/internal/rql"
+	"github.com/Nikhil-Singh2745/rawth/internal/storage"
 )
 
 // HTTPServer serves the web UI and provides a REST API + WebSocket interface.

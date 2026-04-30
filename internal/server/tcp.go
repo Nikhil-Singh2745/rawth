@@ -7,7 +7,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/niksingh2745/rawth/internal/rql"
+	"github.com/Nikhil-Singh2745/rawth/internal/rql"
 )
 
 // rawth over tcp. you can telnet into this if you want. 

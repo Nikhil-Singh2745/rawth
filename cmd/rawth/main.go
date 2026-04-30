@@ -8,10 +8,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/niksingh2745/rawth/internal/rql"
-	"github.com/niksingh2745/rawth/internal/server"
-	"github.com/niksingh2745/rawth/internal/storage"
-	"github.com/niksingh2745/rawth/web"
+	"github.com/Nikhil-Singh2745/rawth/internal/rql"
+	"github.com/Nikhil-Singh2745/rawth/internal/server"
+	"github.com/Nikhil-Singh2745/rawth/internal/storage"
+	"github.com/Nikhil-Singh2745/rawth/web"
 )
 
 const version = "1.0.0"

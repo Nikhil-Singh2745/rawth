@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/niksingh2745/rawth/internal/storage"
+	"github.com/Nikhil-Singh2745/rawth/internal/storage"
 )
 
 // the output of our hard work. if ok is false, something went wrong 
