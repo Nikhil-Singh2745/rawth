@@ -3,6 +3,7 @@
 A key-value database built from scratch in Go. Custom B+Tree, custom binary file format, custom query language, TCP server, HTTP API, WebSocket server, and a web UI. No ORM. No Postgres. No SQLite. No `gorilla/websocket`. Zero external dependencies.
 
 Not because that was the wise choice. Because that was the point.
+ORIGINALLY Deployed on Railway, then my trial ran out so i took it down, will deploy it on render if i get time.
 
 ---
 
